@@ -1,0 +1,28 @@
+# ---------------- VARIABLES ---------------- 
+let false_string_list = [false, False]
+let true_string_list = [true, True]
+# ---------------- RULES ---------------- 
+# Check whether are Amazon Simple Storage Service (Amazon S3) buckets are encrypted with AWS Key Management Service (AWS KMS)
+# Checks if S3 bucket either has Amazon S3 default encryption enabled
+AWS::S3::Bucket BucketEncryption.ServerSideEncryptionConfiguration.ServerSideEncryptionByDefault.KMSMasterKeyID == /.*/
+AWS::S3::Bucket BucketEncryption.ServerSideEncryptionConfiguration.ServerSideEncryptionByDefault.SSEAlgorithm == aws:kms
+# ---
+# Ensure Amazon Simple Storage Service (Amazon S3) bucket has lock enabled by default
+AWS::S3::Bucket ObjectLockConfiguration.ObjectLockEnabled == Enabled
+# ---
+# Enable bucket logging for s3 buckets
+AWS::S3::Bucket LoggingConfiguration.DestinationBucketName == /.*/
+# ---
+# Check if S3 buckets have policies that require requests to use Secure Socket Layer (SSL) only
+# AWS::S3::BucketPolicy PolicyDocument.Statement.*.Condition.Bool == {"aws:SecureTransport": false}
+# ---
+# Ensure versioning is enabled for your S3 buckets storing client or Genpact sensitive information.
+AWS::S3::Bucket VersioningConfiguration == /.*/
+AWS::S3::Bucket VersioningConfiguration.Status == Enabled
+# ---
+# Disallow public read access to S3 buckets
+# Disallow public write access to S3 buckets
+AWS::S3::Bucket PublicAccessBlockConfiguration.BlockPublicAcls IN %true_string_list
+AWS::S3::Bucket PublicAccessBlockConfiguration.BlockPublicPolicy IN %true_string_list
+AWS::S3::Bucket PublicAccessBlockConfiguration.IgnorePublicAcls IN %true_string_list
+AWS::S3::Bucket PublicAccessBlockConfiguration.RestrictPublicBuckets IN %true_string_list

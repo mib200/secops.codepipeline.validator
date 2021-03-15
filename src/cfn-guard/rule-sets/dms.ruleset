@@ -1,0 +1,7 @@
+# ---------------- VARIABLES ---------------- 
+let false_string_list = [false, False]
+let true_string_list = [true, True]
+# ---------------- RULES ---------------- 
+# ---
+# AWS Database Migration Service replication (DMSR) instances should not be exposed on public.
+AWS::DMS::ReplicationInstance PubliclyAccessible NOT_IN %true_string_list

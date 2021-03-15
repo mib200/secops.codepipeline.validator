@@ -1,0 +1,13 @@
+# ---------------- VARIABLES ---------------- 
+let false_string_list = [false, False]
+# ---------------- RULES ---------------- 
+# ---
+# This policy identifies ElastiCache Redis clusters which have in-transit encryption disabled. Enabling data encryption in-transit helps prevent unauthorized users from reading sensitive data between your Redis clusters and their associated cache storage systems.
+AWS::ElastiCache::ReplicationGroup WHEN Engine == redis CHECK TransitEncryptionEnabled NOT_IN %false_string_list
+# ---
+# This policy identifies ElastiCache Redis clusters which have encryption for data at rest disabled.
+AWS::ElastiCache::ReplicationGroup WHEN Engine == redis CHECK AtRestEncryptionEnabled NOT_IN %false_string_list
+# ---
+# This policy identifies ElastiCache Redis clusters which have Redis AUTH feature disabled. Redis AUTH can improve data security by requiring the user to enter a password before they are granted permission to execute Redis commands on a password protected Redis server.
+AWS::ElastiCache::ReplicationGroup WHEN Engine == redis CHECK AuthToken == /.*/
+# ---

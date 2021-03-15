@@ -1,0 +1,8 @@
+# ---------------- VARIABLES ---------------- 
+let false_string_list = [false, False]
+let true_string_list = [true, True]
+# ---------------- RULES ---------------- 
+# AWS Elastic File System (EFS) with encryption for data at rest is enabled - It is highly recommended to implement at-rest encryption in order to prevent unauthorized users from reading sensitive data saved to EFSs.
+AWS::EFS::FileSystem KmsKeyId == /.*/
+AWS::EFS::FileSystem Encrypted NOT_IN %false_string_list
+# ---

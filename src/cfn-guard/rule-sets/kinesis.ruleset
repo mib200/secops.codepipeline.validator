@@ -1,0 +1,7 @@
+# ---------------- VARIABLES ---------------- 
+let false_string_list = [false, False]
+# ---------------- RULES ---------------- 
+# ---
+# Kinesis Stream encryption should be enabled
+AWS::Kinesis::Stream StreamEncryption.EncryptionType == KMS
+# ---

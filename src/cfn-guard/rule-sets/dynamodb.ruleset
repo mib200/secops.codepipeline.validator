@@ -1,0 +1,9 @@
+# ---------------- VARIABLES ----------------
+let false_string_list = [false, False]
+let true_string_list = [true, True]
+# ---------------- RULES ----------------
+# Checks whether Amazon DynamoDB table is encrypted with AWS Key Management Service (KMS)
+AWS::DynamoDB::Table SSESpecification.SSEEnabled NOT_IN %false_string_list
+AWS::DynamoDB::Table SSESpecification.SSEType == KMS
+AWS::DynamoDB::Table SSESpecification.KMSMasterKeyId == /.*/
+# ---

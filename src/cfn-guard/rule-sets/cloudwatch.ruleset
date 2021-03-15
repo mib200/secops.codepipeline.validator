@@ -1,0 +1,9 @@
+# ---------------- VARIABLES ---------------- 
+let false_string_list = [false, False]
+let true_string_list = [true, True]
+let cloudwatch_logs_retention_period = 7
+# ---------------- RULES ---------------- 
+# Amazon CloudWatch LogGroup retention period is set to 7 days
+AWS::Logs::LogGroup RetentionInDays == %cloudwatch_logs_retention_period
+# Integrate CloudTrail events with CloudWatch Logs.
+AWS::CloudTrail::Trail CloudWatchLogsLogGroupArn == /.*/

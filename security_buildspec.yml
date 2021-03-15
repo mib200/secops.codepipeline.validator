@@ -1,0 +1,32 @@
+version: 0.2
+
+run-as: root
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.x
+    commands:
+      - echo "Setting up PIP, Rust, cfn-lint and CloudFormation Guard"
+      - echo $(pwd)
+      - apt-get install git curl wget -y
+      - wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py && python3 get-pip.py
+      - python3 -m pip install -r src/py_scripts/requirements_run-cfn-guard.txt
+      - git clone --depth 1 --branch v0.7.0-beta https://github.com/aws-cloudformation/cloudformation-guard.git
+      - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y -v --profile complete
+      - . $HOME/.cargo/env && export PATH="$HOME/.cargo/bin:$PATH"
+      - cd cloudformation-guard && make cfn-guard && cd -
+    finally:
+      - echo $(rustc --version)
+      - echo $(cloudformation-guard/bin/cfn-guard --version)
+      - echo $(python3 --version)
+      - echo $(pip3 --version)
+  build:
+    commands:
+      - python3 ./src/py_scripts/run-cfn-guard.py
+reports:
+  CfnGuardReports:
+    files:
+      - output.xml
+    base-directory: .
+

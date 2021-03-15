@@ -1,0 +1,7 @@
+# ---------------- VARIABLES ---------------- 
+let false_string_list = [false, False]
+let true_string_list = [true, True]
+# ---------------- RULES ---------------- 
+# ---
+# DynamoDB Accelerator (DAX) clusters are encrypted.
+AWS::DAX::Cluster SSESpecification.SSEEnabled NOT_IN %false_string_list

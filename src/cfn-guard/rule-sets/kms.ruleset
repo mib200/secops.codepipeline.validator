@@ -1,0 +1,7 @@
+# ---------------- VARIABLES ---------------- 
+let false_string_list = [false, False]
+# ---------------- RULES ----------------
+# ---
+# Checks that key rotation is enabled for each key and matches to the key ID of the customer created customer master key (CMK).
+AWS::KMS::Key EnableKeyRotation NOT_IN %false_string_list
+# ---

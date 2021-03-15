@@ -1,0 +1,9 @@
+# ---------------- VARIABLES ---------------- 
+let false_string_list = [false, False]
+let true_string_list = [true, True]
+# ---------------- RULES ---------------- 
+# ---
+# Ensure your ECS containers are not given elevated privileges on the host container instance.
+# When the Privileged parameter is true, the container is given elevated privileges on the host container instance (similar to the root user).
+AWS::ECS::TaskDefinition WHEN ContainerDefinitions.*.Privileged == /.*/ CHECK ContainerDefinitions.*.Privileged NOT_IN %true_string_list
+# ---

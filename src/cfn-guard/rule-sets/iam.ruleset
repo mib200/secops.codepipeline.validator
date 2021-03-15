@@ -1,0 +1,31 @@
+# ---------------- VARIABLES ---------------- 
+let false_string_list = [false, False]
+let blocked_managed_iam_policy_list = [arn:aws:iam::aws:policy/AdministratorAccess]
+# ---------------- RULES ---------------- 
+# ---
+# Do not allow iam:PassRole with Wildcards
+AWS::IAM::Policy WHEN PolicyDocument.Statement.*.Action == iam:PassRole CHECK PolicyDocument.Statement.*.Resource != *
+AWS::IAM::Policy WHEN PolicyDocument.Statement.*.Action == iam:PassRole CHECK PolicyDocument.Statement.*.Resource.* != *
+AWS::IAM::Policy WHEN PolicyDocument.Statement.*.Action.* == iam:PassRole CHECK PolicyDocument.Statement.*.Resource.* != *
+AWS::IAM::ManagedPolicy WHEN PolicyDocument.Statement.*.Action == iam:PassRole CHECK PolicyDocument.Statement.*.Resource != *
+AWS::IAM::ManagedPolicy WHEN PolicyDocument.Statement.*.Action == iam:PassRole CHECK PolicyDocument.Statement.*.Resource.* != *
+AWS::IAM::ManagedPolicy WHEN PolicyDocument.Statement.*.Action.* == iam:PassRole CHECK PolicyDocument.Statement.*.Resource.* != *
+# ---
+# No normal user should be able to change the properties of other users, either directly or through modification of groups or roles.
+AWS::IAM::Policy PolicyDocument.Statement.*.Action.* NOT_IN [iam:CreatePolicyVersion, iam:SetDefaultPolicyVersion, iam:AttachUserPolicy,iam:AttachGroupPolicy, iam:AttachRolePolicy, iam:PutUserPolicy, iam:PutGroupPolicy, iam:PutRolePolicy]
+AWS::IAM::Policy PolicyDocument.Statement.*.Action NOT_IN [iam:CreatePolicyVersion, iam:SetDefaultPolicyVersion, iam:AttachUserPolicy,iam:AttachGroupPolicy, iam:AttachRolePolicy, iam:PutUserPolicy, iam:PutGroupPolicy, iam:PutRolePolicy]
+# ---
+# No normal user or cloud operations personnel should be able to change policies that apply to themselves or others.
+AWS::IAM::Policy PolicyDocument.Statement.*.Action.* NOT_IN [iam:CreateAccessKey, iam:CreateLoginProfile, iam:UpdateLoginProfile, iam:AddUserToGroup]
+AWS::IAM::ManagedPolicy PolicyDocument.Statement.*.Action.* NOT_IN [iam:CreateAccessKey, iam:CreateLoginProfile, iam:UpdateLoginProfile, iam:AddUserToGroup]
+AWS::IAM::Policy PolicyDocument.Statement.*.Action NOT_IN [iam:CreateAccessKey, iam:CreateLoginProfile, iam:UpdateLoginProfile, iam:AddUserToGroup]
+AWS::IAM::ManagedPolicy PolicyDocument.Statement.*.Action NOT_IN [iam:CreateAccessKey, iam:CreateLoginProfile, iam:UpdateLoginProfile, iam:AddUserToGroup]
+# ---
+# Check if AWS Identity and Access Management (IAM) user, IAM role or IAM group has any inline policy.
+AWS::IAM::User WHEN Policies == /.*/ CHECK Policies != /.*/
+# ---
+# Checks whether IAM users are members of at least one IAM group.
+AWS::IAM::User Groups == /.*/
+# ---
+# Do not assign user "AdministratorAccess" policy
+AWS::IAM::User WHEN ManagedPolicyArns == /.*/ CHECK ManagedPolicyArns.* NOT_IN %blocked_managed_iam_policy_list

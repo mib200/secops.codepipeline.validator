@@ -1,0 +1,19 @@
+# ---------------- VARIABLES ---------------- 
+let false_string_list = [false, False]
+let true_string_list = [true, True]
+let minimum_redshift_automated_snapshot_retention_period = 1
+# ---------------- RULES ----------------
+# Checks that Amazon Redshift automated snapshots are enabled for clusters. The rule is NON_COMPLIANT if the value for automatedSnapshotRetentionPeriod is greater than MaxRetentionPeriod or less than MinRetentionPeriod or the value is 0.
+AWS::Redshift::Cluster AutomatedSnapshotRetentionPeriod >= %minimum_redshift_automated_snapshot_retention_period
+AWS::Redshift::ClusterParameterGroup Parameters.* IN [{"ParameterName":"require_ssl","ParameterValue":"false"}]
+# ---
+# Checks whether Amazon Redshift clusters are not publicly accessible.
+AWS::Redshift::Cluster PubliclyAccessible NOT_IN %true_string_list
+# ---
+# Audit logging is not enabled by default in Amazon Redshift. This policy will report for any Elasticsearch that have audit logging disabled.
+AWS::Redshift::Cluster LoggingProperties.BucketName == /.*/
+# ---
+# AWS Redshift instances should be encrypted.
+AWS::Redshift::Cluster Encrypted NOT_IN %false_string_list
+AWS::Redshift::Cluster KmsKeyId == /.*/
+# ---

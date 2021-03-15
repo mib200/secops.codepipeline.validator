@@ -1,0 +1,21 @@
+# ---------------- VARIABLES ----------------
+let false_string_list = [false, False]
+# ---------------- RULES ----------------
+# ---
+# Checks that all methods in Amazon API Gateway stages have caching enabled and encrypted.
+AWS::ApiGateway::Stage CacheClusterEnabled NOT_IN %false_string_list
+AWS::ApiGateway::Stage MethodSettings.*.CacheDataEncrypted NOT_IN %false_string_list
+AWS::ApiGateway::Stage MethodSettings.*.CachingEnabled NOT_IN %false_string_list
+# ---
+# Checks that all methods in Amazon API Gateway stage has logging enabled.
+AWS::ApiGateway::Stage MethodSettings.*.LoggingLevel NOT_IN [OFF]
+# ---
+# It is recommended to validate the request parameters in the URI, query string, and headers of an incoming request to focus on the validation efforts specific to your application.
+AWS::ApiGateway::Method RequestValidatorId == /.*/
+# ---
+# This policy identifies AWS API Gateways of protocol type REST for which the request authorisation is not set.
+AWS::ApiGatewayV2::Route AuthorizerId == /.*/
+# ---
+# API Gateway can generate an SSL certificate and use its public key in the backend to verify that HTTP requests to your backend system are from API Gateway. This allows your HTTP backend to control and accept only requests originating from Amazon API Gateway, even if the backend is publicly accessible.
+AWS::ApiGateway::Stage ClientCertificateId == /.*/
+# ---

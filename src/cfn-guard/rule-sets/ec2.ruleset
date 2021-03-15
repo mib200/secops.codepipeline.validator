@@ -1,0 +1,17 @@
+# ---------------- VARIABLES ----------------
+let false_string_list = [false, False]
+let true_string_list = [true, True]
+# ---------------- RULES ----------------
+# ---
+# Checks whether Amazon Elastic Compute Cloud (Amazon EC2) instances have a public IP association.
+AWS::EC2::Instance NetworkInterfaces.*.AssociatePublicIpAddress NOT_IN %true_string_list
+# ---
+# AWS VPC subnets should not allow automatic public IP assignment - Identify VPC subnets which allow automatic public IP assignment. Assigning the Public IP to the subnet automatically (on launch) can accidentally expose the instances within this subnet to internet
+AWS::EC2::Subnet MapPublicIpOnLaunch NOT_IN %true_string_list
+# ---
+# Secure EBS volumes attached to EC2 instances through encryption
+AWS::EC2::Volume Encrypted NOT_IN %false_string_list
+# ---
+# Checks that security groups are attached to Amazon Elastic Compute Cloud (Amazon EC2) instances or to an elastic network interface.
+AWS::EC2::NetworkInterface GroupSet == /.*/
+# ---

@@ -1,0 +1,13 @@
+# ---------------- VARIABLES ---------------- 
+let false_string_list = [false, False]
+# ---------------- RULES ---------------- 
+# ---
+# This policy verifies that Lambda function uses the AMS Key Management Service to encrypt variables at-rest with CMK.
+AWS::Lambda::Function KmsKeyArn == /.*/
+# ---
+# AWS Lambda functions with tracing not enabled
+AWS::Lambda::Function TracingConfig.Mode == Active
+# ---
+# Identify the AWS Lambda functions which do not have access within the VPC.
+AWS::Lambda::Function VpcConfig == /.*/
+# ---

@@ -1,0 +1,39 @@
+# ---------------- VARIABLES ---------------- 
+let false_string_list = [false, False]
+let true_string_list = [true, True]
+let minimum_rds_backup_retention_period = 1
+let allowed_multi_az_engine_list = [aurora,aurora-mysql,aurora-postgresql]
+# ---------------- RULES ---------------- 
+# Checks whether storage encryption is enabled for RDS DB instances.
+AWS::RDS::DBInstance StorageEncrypted == true
+# ---
+# AWS RDS retention policy less than 7 days - RDS Retention Policies for Backups are an important part of  DR/BCP strategy. Recovering data from catastrophic failures, malicious attacks, or corruption often requires a several day window of potentially good backup material to leverage.
+AWS::RDS::DBInstance BackupRetentionPeriod >= 7 
+# ---
+# AWS RDS instance with Multi-Availability Zone disabled - Identify RDS instances which have Multi-Availability Zone(Multi-AZ) disabled.
+AWS::RDS::DBInstance WHEN Engine NOT_IN %allowed_multi_az_engine_list CHECK MultiAZ NOT_IN %false_string_list
+# ---
+# AWS RDS database not encrypted using Customer Managed Key - Identify RDS databases that are encrypted with default KMS keys and not with customer managed keys.
+AWS::RDS::DBInstance KmsKeyId == /.*/
+# ---
+# Disallow public access to RDS database instances
+AWS::RDS::DBInstance PubliclyAccessible NOT_IN %false_string_list
+# ---
+# Checks if an Amazon Relational Database Service (Amazon RDS) instance has AWS Identity and Access Management (IAM) authentication enabled. This rule is NON_COMPLIANT if an Amazon RDS instance does not have AWS IAM authentication enabled i.e configuration.iAMDatabaseAuthenticationEnabled is set to false.
+AWS::RDS::DBInstance EnableIAMDatabaseAuthentication NOT_IN %false_string_list
+# ---
+# Checks if an Amazon Relational Database Service (Amazon RDS) instance has deletion protection enabled.
+AWS::RDS::DBInstance DeletionProtection NOT_IN %false_string_list
+# ---
+# Identify RDS instances which are not set with the Automatic Backup setting. 
+AWS::RDS::DBInstance BackupRetentionPeriod > %minimum_rds_backup_retention_period
+# ---
+# Disallow RDS database cluster when storage is not encrypted
+AWS::RDS::DBCluster StorageEncrypted NOT_IN %false_string_list
+# ---
+# AWS RDS DB cluster encryption is disabled - Identify RDS DB clusters for which encryption is disabled
+AWS::RDS::DBCluster KmsKeyId == /.*/
+# ---
+# Checks if an Amazon Relational Database Service (Amazon RDS) cluster has deletion protection enabled
+AWS::RDS::DBCluster DeletionProtection NOT_IN %false_string_list
+# ---

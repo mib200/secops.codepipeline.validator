@@ -1,0 +1,2 @@
+# The certificate logging should be enabled. The rule should detect and enable Certificate Transparency Logging for certificates.
+AWS::CertificateManager::Certificate CertificateTransparencyLoggingPreference == ENABLED

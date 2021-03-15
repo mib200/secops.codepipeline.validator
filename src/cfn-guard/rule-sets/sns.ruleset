@@ -1,0 +1,10 @@
+# ---------------- VARIABLES ---------------- 
+let blocked_sns_subscription_protocol_list = [http]
+# ---------------- RULES ---------------- 
+# ---
+# SNS Enable server-side encryption to protect data-at-rest or use CMK for encryption.
+AWS::SNS::Topic KmsMasterKeyId == /.*/ << KMS encryption should be enabled for SNS topics.
+# ---
+# This policy identifies SNS subscriptions using HTTP instead of HTTPS as the delivery protocol in order to enforce SSL encryption for all subscription requests. 
+AWS::SNS::Subscription Protocol NOT_IN %blocked_sns_subscription_protocol_list
+# ---

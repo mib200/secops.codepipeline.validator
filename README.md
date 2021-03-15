@@ -1,0 +1,1 @@
+# CloudFormation Guard rule sets validator

@@ -1,0 +1,20 @@
+# ---------------- VARIABLES ----------------
+let false_string_list = [false, False]
+let true_string_list = [true, True]
+# ---------------- RULES ----------------
+# AWS Web Application Firewall (AWS WAF) should be enabled for AWS CloudFront web distribution.
+AWS::CloudFront::Distribution DistributionConfig.WebACLId == /.*/
+# ---
+# The CloudFront distribution should be configured with TLS1.2 or above. It will limit the vulnerabilities of lower TLS versions.
+AWS::CloudFront::Distribution ViewerCertificate.MinimumProtocolVersion == TLSv1.2_2018
+# ---
+# Checks whether your Amazon CloudFront distributions use HTTPS
+AWS::CloudFront::Distribution DistributionConfig.DefaultCacheBehavior.ViewerProtocolPolicy NOT_IN [redirect-to-https,https-only]
+AWS::CloudFront::Distribution DistributionConfig.CacheBehaviors.*.ViewerProtocolPolicy NOT_IN [redirect-to-https,https-only]
+# ---
+# This policy identifies CloudFront distributions which have access logging disabled. Enabling access log on distributions creates log files that contain detailed information about every user request that CloudFront receives.
+AWS::CloudFront::Distribution DistributionConfig.Logging == /.*/
+# ---
+# AWS CloudFront origin protocol policy should be set to HTTPS-only. It will ensure the encryption of data in-transit.
+AWS::CloudFront::Distribution WHEN Origins.*.CustomOriginConfig == /.*/ CHECK Origins.*.CustomOriginConfig.OriginProtocolPolicy == https-only
+# ---

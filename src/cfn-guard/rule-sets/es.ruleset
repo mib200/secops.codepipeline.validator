@@ -1,0 +1,17 @@
+# ---------------- VARIABLES ---------------- 
+let false_string_list = [false, False]
+let true_string_list = [true, True]
+# ---------------- RULES ---------------- 
+# ---
+# Checks whether Amazon Elasticsearch Service (Amazon ES) domains have encryption at rest configuration enabled
+AWS::Elasticsearch::Domain EncryptionAtRestOptions == /.*/
+AWS::Elasticsearch::Domain EncryptionAtRestOptions.Enabled NOT_IN %false_string_list
+AWS::Elasticsearch::Domain EncryptionAtRestOptions.KmsKeyId == /.*/
+# ---
+# VPC support for Amazon ES is easy to configure, reliable, and offers an extra layer of security. With VPC support, traffic between other services and Amazon ES stays entirely within the AWS network, isolated from the public Internet.
+AWS::Elasticsearch::Domain VPCOptions == /.*/
+AWS::Elasticsearch::Domain VPCOptions.SubnetIds == /.*/
+# ---
+# Check that Amazon ElasticSearch Service nodes are encrypted end to end.
+AWS::Elasticsearch::Domain NodeToNodeEncryptionOptions.Enabled NOT_IN %false_string_list
+# ---

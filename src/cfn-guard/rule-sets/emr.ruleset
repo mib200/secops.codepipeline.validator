@@ -1,0 +1,8 @@
+# ---------------- VARIABLES ---------------- 
+let false_string_list = [false, False]
+let true_string_list = [true, True]
+# ---------------- RULES ---------------- 
+# Checks that Amazon EMR clusters have Kerberos enabled.
+AWS::EMR::Cluster KerberosAttributes == /.*/
+AWS::EMR::SecurityConfiguration SecurityConfiguration.Kerberos == /.*/
+# ---

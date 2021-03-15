@@ -1,0 +1,7 @@
+# ---------------- VARIABLES ---------------- 
+let false_string_list = [false, False]
+let true_string_list = [true, True]
+# ---------------- RULES ---------------- 
+# Checks whether Amazon Elastic Kubernetes Service clusters are configured to have Kubernetes secrets encrypted using AWS Key Management Service (KMS) keys. 
+AWS::EKS::Cluster EncryptionConfig == /.*/
+AWS::EKS::Cluster EncryptionConfig.Provider.KeyArn == /.*/

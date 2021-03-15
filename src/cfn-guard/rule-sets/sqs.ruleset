@@ -1,0 +1,7 @@
+# ---------------- VARIABLES ---------------- 
+let false_string_list = [false, False]
+let true_string_list = [true, True]
+# ---------------- RULES ---------------- 
+# SQS Ensure to encrypt the data at-rest by using KMS to protect from snooping.
+AWS::SQS::Queue KmsMasterKeyId == /.*/ << SQS queues must be encrypted.
+# ---

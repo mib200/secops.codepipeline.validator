@@ -1,0 +1,28 @@
+version: 0.2
+
+run-as: root
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.x
+    commands:
+      - echo "Setting up PIP, cfn-lint"
+      - echo $(pwd)
+      - yum install git curl wget -y
+      - wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py && python3 get-pip.py
+      - pip3 install cfn-lint
+    finally:
+      - echo $(cfn-lint -v)
+      - echo $(python3 --version)
+      - echo $(pip3 --version)
+  build:
+    commands:
+      - echo "Validating templates using cfn-lint"
+      - ls
+      - cfn-lint ./src/templates/*
+      - echo "cfn-lint validation complete"
+      - echo "Validating JSON files (SCPs and parameters)"
+      - python ./src/py_scripts/json_validator.py
+      - echo "JSON validation complete."
+
